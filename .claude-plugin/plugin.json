@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "bybit-eu-trading",
   "displayName": "Bybit EU Trading",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Trade Spot and Spot-Margin on Bybit EU (bybit.eu) using natural language. Local HMAC signing keeps secrets on-device; mainnet writes require explicit confirmation. MiCA-regulated: Spot + Spot-Margin only, Unified Trading Account.",
   "author": {
     "name": "Bybit EU",

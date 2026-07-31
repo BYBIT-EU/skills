@@ -2,7 +2,7 @@
 
 Trade on Bybit EU using natural language. Tell any AI assistant one sentence, and it can execute trades, check markets, manage spot and spot-margin positions, and more — zero installation required.
 
-**Version:** 1.0.0 | **License:** MIT | **Scope:** Spot + Spot-Margin only (no derivatives, options, or earn)
+**Version:** 1.0.1 | **License:** MIT | **Scope:** Spot + Spot-Margin only (no derivatives, options, or earn)
 
 ## How It Works
 
@@ -35,7 +35,6 @@ Works with any AI assistant that can read files or URLs:
 | **Account** | Balances, fee rates, collateral settings, account info |
 | **Asset** | Deposit addresses, withdraw records, deposit records, coin info, total members assets, internal transfers |
 | **Convert** | Crypto↔crypto and fiat↔crypto conversion (quote, execute, history) |
-| **User** | API key info, sub-account list, sub-member management |
 | **WebSocket** | Live orderbook, ticker, kline, and trade streams |
 
 ## Quick Start
