@@ -2,9 +2,9 @@
 name: bybit-eu-trading
 description: Bybit EU AI Trading Skill — Trade Spot and Spot-Margin on Bybit EU (bybit.eu) using natural language. Works with Claude, ChatGPT, OpenClaw, and any AI assistant.
 metadata:
-  version: 1.0.0  # EU Spot + Spot-Margin, HMAC baseline
+  version: 1.0.1  # EU Spot + Spot-Margin, HMAC baseline
   author: Bybit EU
-  updated: 2026-07-28
+  updated: 2026-07-31
 license: MIT
 ---
 
@@ -25,9 +25,9 @@ FOREGROUND (main agent — immediate):
 1. Respond to the user's request using the current local version. Do NOT wait for the update check.
 
 BACKGROUND (sub-agent — parallel):
-1. LOCAL_VERSION = metadata.version  (1.0.0, from YAML frontmatter above)
+1. LOCAL_VERSION = metadata.version  (1.0.1, from YAML frontmatter above)
 2. SKILL_DIR = directory where this SKILL.md is located
-3. MANIFEST = curl -sf -H "User-Agent: bybit-eu-skill/1.0.0" https://api.bybit.eu/ai-manifest/skill/eu/manifest
+3. MANIFEST = curl -sf -H "User-Agent: bybit-eu-skill/1.0.1" https://api.bybit.eu/ai-manifest/skill/eu/manifest
    (returns JSON: {"version":"x.y.z", "files":{"SKILL.md":"sha256:...","modules/market.md":"sha256:...",...}})
 4. If fetch fails: return {status: "error", reason: "fetch_failed"} and use local files.
 5. Path validation: For each file in manifest.files, reject the ENTIRE update if ANY path:
@@ -37,7 +37,7 @@ BACKGROUND (sub-agent — parallel):
 6. Version comparison (semver): split by ".", compare major → minor → patch numerically.
    If manifest.version > LOCAL_VERSION:
    a. For each file in manifest.files:
-      - Download: curl -sf -H "User-Agent: bybit-eu-skill/1.0.0" https://raw.githubusercontent.com/BYBIT-EU/skills/main/<file>
+      - Download: curl -sf -H "User-Agent: bybit-eu-skill/1.0.1" https://raw.githubusercontent.com/BYBIT-EU/skills/main/<file>
       - Save content to temp file, then compute SHA256: shasum -a 256 <temp_file> | awk '{print $1}'
       - Compare with manifest checksum (strip "sha256:" prefix)
       - If mismatch: ABORT entire update. return {status: "error", reason: "checksum_mismatch", file: "<file>"}
@@ -145,11 +145,11 @@ Tell the user what they can do. Examples:
 2. If the module has NOT been loaded in this session:
    a. Ensure manifest is available:
       - If cached from Auto Update: reuse it
-      - Otherwise: MANIFEST = curl -sf -H "User-Agent: bybit-eu-skill/1.0.0" https://api.bybit.eu/ai-manifest/skill/eu/manifest
+      - Otherwise: MANIFEST = curl -sf -H "User-Agent: bybit-eu-skill/1.0.1" https://api.bybit.eu/ai-manifest/skill/eu/manifest
       - If fetch fails: use current local version of the module (SKILL_DIR/modules/<module>.md)
         If no local version exists: inform user module unavailable, only GET operations permitted
       - Cache manifest in session
-   b. Download: curl -sf -H "User-Agent: bybit-eu-skill/1.0.0" https://raw.githubusercontent.com/BYBIT-EU/skills/main/modules/<module>.md
+   b. Download: curl -sf -H "User-Agent: bybit-eu-skill/1.0.1" https://raw.githubusercontent.com/BYBIT-EU/skills/main/modules/<module>.md
       - If download fails: use current local version of the module
         If no local version exists: inform user module unavailable, only GET operations permitted
    c. Verify integrity:
@@ -171,13 +171,12 @@ Tell the user what they can do. Examples:
 | balance, wallet, fee, collateral, margin mode, transaction log, repay liability, SMP, account info | **account** | `modules/account.md` | — |
 | transfer, deposit, withdraw, deposit address, coin info, travel rule, VASP, sub-account balance | **asset** | `modules/asset.md` | account |
 | convert, swap coins, small balance, fiat, buy with EUR, sell to fiat, quote | **convert** | `modules/convert.md` | account |
-| sub-account, create sub, freeze sub, API key management, referral, member type | **user** | `modules/user.md` | — |
 | websocket, stream, subscribe, real-time order/execution/wallet, orderbook stream | **websocket** | `modules/websocket.md` | — |
 
 Notes:
 - All trading is `category=spot`. `isLeverage=1` on a spot order routes to Spot-Margin (load **margin** to configure first).
 - **Spot ↔ Convert fallback:** for base-base pairs (e.g. BTCDOGE) or unlisted symbols, do NOT call order/create — route to **convert** (quote-then-execute).
-- Chinese synonyms: 查价→market, 买/卖/现货→spot, 杠杆/借币→margin, 余额/转账/充值/提币→account/asset, 兑换/闪兑/法币→convert, 子账户/API密钥→user, 实时/订阅→websocket.
+- Chinese synonyms: 查价→market, 买/卖/现货→spot, 杠杆/借币→margin, 余额/转账/充值/提币→account/asset, 兑换/闪兑/法币→convert, 实时/订阅→websocket.
 
 ### Loading Rules
 
@@ -223,7 +222,7 @@ Bybit EU signs requests with **HMAC-SHA256 only**.
 | `X-BAPI-SIGN` | HMAC-SHA256 signature (lowercase hex) |
 | `X-BAPI-RECV-WINDOW` | `5000` (default; validity window in ms) |
 | `Content-Type` | `application/json` (POST) |
-| `User-Agent` | `bybit-eu-skill/1.0.0` |
+| `User-Agent` | `bybit-eu-skill/1.0.1` |
 | `X-Referer` | `bybit-eu-skill` |
 
 **Timestamp rule:** `server_time - recv_window <= timestamp < server_time + 1000`. Use local NTP-synced device time; fetch `server_time` from `GET /v5/market/time`.
@@ -264,7 +263,7 @@ curl -s "${BASE_URL}/v5/account/wallet-balance?${QUERY}" \
   -H "X-BAPI-TIMESTAMP: ${TIMESTAMP}" \
   -H "X-BAPI-SIGN: ${SIGN}" \
   -H "X-BAPI-RECV-WINDOW: ${RECV_WINDOW}" \
-  -H "User-Agent: bybit-eu-skill/1.0.0" \
+  -H "User-Agent: bybit-eu-skill/1.0.1" \
   -H "X-Referer: bybit-eu-skill"
 ```
 
@@ -286,7 +285,7 @@ curl -s -X POST "${BASE_URL}/v5/order/create" \
   -H "X-BAPI-TIMESTAMP: ${TIMESTAMP}" \
   -H "X-BAPI-SIGN: ${SIGN}" \
   -H "X-BAPI-RECV-WINDOW: ${RECV_WINDOW}" \
-  -H "User-Agent: bybit-eu-skill/1.0.0" \
+  -H "User-Agent: bybit-eu-skill/1.0.1" \
   -H "X-Referer: bybit-eu-skill" \
   -d "${BODY}"
 ```
